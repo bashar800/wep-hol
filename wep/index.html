@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول / إنشاء حساب</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #16a085;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #138d75;
+        }
+        #message {
+            margin-top: 10px;
+            font-size: 14px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تسجيل الدخول / إنشاء حساب</h1>
+        <input type="email" id="email" placeholder="البريد الإلكتروني">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <button onclick="signUp()">إنشاء حساب</button>
+        <button onclick="signIn()">تسجيل الدخول</button>
+        <p id="message"></p>
+    </div>
+
+    <!-- أضف Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrfQbhPidlMVCSvLS1514h0zb0-Og246E",
+            authDomain: "data-app-7681f.firebaseapp.com",
+            databaseURL: "https://data-app-7681f-default-rtdb.firebaseio.com",
+            projectId: "data-app-7681f",
+            storageBucket: "data-app-7681f.appspot.com",
+            messagingSenderId: "413255061488",
+            appId: "1:413255061488:web:e1c1f0d0850ad626e7d735",
+            measurementId: "G-08J539YN5T"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // إنشاء حساب
+        window.signUp = function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const message = document.getElementById('message');
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    message.textContent = "تم إنشاء الحساب بنجاح!";
+                    window.location.href = 'home.html'; // توجيه المستخدم إلى home.html
+                })
+                .catch((error) => {
+                    message.textContent = error.message;
+                });
+        };
+
+        // تسجيل الدخول
+        window.signIn = function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const message = document.getElementById('message');
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    message.textContent = "تم تسجيل الدخول بنجاح!";
+                    window.location.href = 'home.html'; // توجيه المستخدم إلى home.html
+                })
+                .catch((error) => {
+                    message.textContent = error.message;
+                });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد الطلب</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #2d3436;
+        }
+        .checkout-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .checkout-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .checkout-form label {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .checkout-form input {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .checkout-form button {
+            padding: 15px;
+            background-color: #16a085;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+        .checkout-form button:hover {
+            background-color: #138a72;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <h1>تأكيد الطلب</h1>
+        <form class="checkout-form" onsubmit="submitOrder(event)">
+            <label for="name">الاسم الكامل:</label>
+            <input type="text" id="name" required>
+
+            <label for="address">العنوان:</label>
+            <input type="text" id="address" required readonly>
+            <small>سيتم تعبئة العنوان تلقائيًا باستخدام GPS.</small>
+
+            <label for="phone">رقم الهاتف:</label>
+            <input type="text" id="phone" required>
+
+            <label for="email">البريد الإلكتروني:</label>
+            <input type="email" id="email" required>
+
+            <button type="submit">تأكيد الطلب</button>
+        </form>
+    </div>
+
+    <script>
+        // أخذ العنوان تلقائيًا عبر GPS
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        getAddressFromCoordinates(latitude, longitude);
+                    },
+                    (error) => {
+                        console.error("Error getting location:", error);
+                        alert("تعذر الحصول على الموقع. يرجى إدخال العنوان يدويًا.");
+                    }
+                );
+            } else {
+                alert("المتصفح لا يدعم تحديد الموقع.");
+            }
+        }
+
+        async function getAddressFromCoordinates(lat, lng) {
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.display_name) {
+                    const address = data.display_name;
+                    document.getElementById('address').value = address;
+                } else {
+                    alert("تعذر العثور على العنوان.");
+                }
+            } catch (error) {
+                console.error("Error fetching address:", error);
+                alert("حدث خطأ أثناء جلب العنوان.");
+            }
+        }
+
+        // تأكيد الطلب
+        function submitOrder(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+
+            // حفظ البيانات أو إرسالها إلى الخادم
+            alert(`شكرًا ${name}، تم استلام طلبك وسيتم الشحن إلى ${address}.`);
+            window.location.href = "thank-you.html"; // توجيه إلى صفحة الشكر
+        }
+
+        // استدعاء الدالة عند تحميل الصفحة
+        window.onload = getLocation;
+    </script>
+</body>
+</html>
